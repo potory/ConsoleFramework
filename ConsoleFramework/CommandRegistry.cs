@@ -17,6 +17,11 @@ public class CommandRegistry
     public void RegisterCommandType<TCommand>() where TCommand : ICommand
     {
         var type = typeof(TCommand);
+        RegisterCommandType(type);
+    }
+
+    public void RegisterCommandType(Type type)
+    {
         var commandAttribute =
             type.GetCustomAttributes(typeof(CommandAttribute), false).FirstOrDefault() as CommandAttribute;
 

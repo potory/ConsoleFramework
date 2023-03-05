@@ -10,8 +10,10 @@ public class CliApplication
 {
     private readonly string _welcomeMessage;
 
-    private readonly CommandFactory _factory;
-    private readonly CommandRegistry _registry;
+    private CommandFactory _factory;
+    private CommandRegistry _registry;
+
+    private readonly HashSet<Type> _commandsToRegister = new();
 
     public IServiceCollection ServiceCollection { get; }
 
@@ -33,7 +35,7 @@ public class CliApplication
     /// </summary>
     /// <typeparam name="TCommand">The type of command to register.</typeparam>
     public void RegisterCommand<TCommand>() where TCommand: ICommand => 
-        _registry.RegisterCommandType<TCommand>();
+        _commandsToRegister.Add(typeof(TCommand));
 
     /// <summary>
     /// Runs the application with the specified command-line arguments.
@@ -43,19 +45,24 @@ public class CliApplication
     {
         var serviceProvider = ServiceCollection.BuildServiceProvider();
 
-        var registry = serviceProvider.GetService<CommandRegistry>();
-        var factory = serviceProvider.GetService<CommandFactory>();
+        _registry = serviceProvider.GetService<CommandRegistry>();
+        _factory = serviceProvider.GetService<CommandFactory>();
 
-        if (registry == null)
+        if (_registry == null)
         {
             throw new Exception();
         }
 
-        registry.RegisterCommandType<HelpCommand>();
+        _registry.RegisterCommandType<HelpCommand>();
+
+        foreach (var type in _commandsToRegister)
+        {
+            _registry.RegisterCommandType(type);
+        }
         
         if (args is { Length: > 0 })
         {
-            var command = factory.CreateCommand(args);
+            var command = _factory.CreateCommand(args);
             command.Evaluate();
             return;
         }
@@ -72,11 +79,10 @@ public class CliApplication
     {
         Console.Write("> ");
         var input = Console.ReadLine();
-
-        var commandName = input?.Split(' ')[0];
-
+        
         try
         {
+            var commandName = input?.Split(' ')[0];
             var commandType = _registry.GetCommandType(commandName);
 
             if (commandType == null)

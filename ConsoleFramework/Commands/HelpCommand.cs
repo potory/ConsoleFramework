@@ -91,6 +91,11 @@ public class HelpCommand : ICommand
 
     private static string GetExampleValue(Type type)
     {
+        if (Nullable.GetUnderlyingType(type) != null)
+        {
+            type = Nullable.GetUnderlyingType(type);
+        }
+
         if (type == typeof(int))
         {
             return "42";
