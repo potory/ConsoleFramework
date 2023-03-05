@@ -3,6 +3,9 @@ using ConsoleFramework.Attributes;
 
 namespace ConsoleFramework;
 
+/// <summary>
+/// Provides functionality to inject command arguments into a command object.
+/// </summary>
 public class CommandArgumentInjector
 {
     private readonly string _commandName;
@@ -16,6 +19,10 @@ public class CommandArgumentInjector
     private readonly IReadOnlyList<ArgumentAttribute> _requiredAttributes;
     private readonly IReadOnlyList<ArgumentAttribute> _optionalAttributes;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CommandArgumentInjector"/> class with the specified type.
+    /// </summary>
+    /// <param name="type">The type of object to inject command arguments into.</param>
     public CommandArgumentInjector(Type type)
     {
         _commandName = type.GetCustomAttribute<CommandAttribute>()?.Names.First();
@@ -27,6 +34,11 @@ public class CommandArgumentInjector
         _optionalAttributes = _optionalProperties.Select(x => x.GetCustomAttribute<ArgumentAttribute>()).ToArray();
     }
 
+    /// <summary>
+    /// Fills the specified command object with the given arguments.
+    /// </summary>
+    /// <param name="command">The command object to fill.</param>
+    /// <param name="args">The arguments to fill the command object with.</param>
     public void Fill(ICommand command, string[] args)
     {
         CacheArguments(args);
@@ -35,6 +47,10 @@ public class CommandArgumentInjector
         SetOptionalArguments(command);
     }
 
+    /// <summary>
+    /// Caches the given arguments for later use.
+    /// </summary>
+    /// <param name="args">The arguments to cache.</param>
     private void CacheArguments(string[] args)
     {
         _namedArguments.Clear();
@@ -55,6 +71,10 @@ public class CommandArgumentInjector
         }
     }
 
+    /// <summary>
+    /// Sets the required arguments of the given command object.
+    /// </summary>
+    /// <param name="command">The command object to set the required arguments for.</param>
     private void SetRequiredArguments(ICommand command)
     {
         int count = _requiredAttributes.Count;
@@ -89,6 +109,10 @@ public class CommandArgumentInjector
         }
     }
 
+    /// <summary>
+    /// Sets the optional arguments of the given command object.
+    /// </summary>
+    /// <param name="command">The command object to set the optional arguments for.</param>
     private void SetOptionalArguments(ICommand command)
     {
         int count = _optionalProperties.Count;
@@ -122,6 +146,12 @@ public class CommandArgumentInjector
         }
     }
 
+    /// <summary>
+    /// Sets the value of the specified property on the given command object to the specified value.
+    /// </summary>
+    /// <param name="command">The command object to set the property value on.</param>
+    /// <param name="prop">The property to set the value of.</param>
+    /// <param name="value">The value to set the property to.</param>
     private static void SetValueToProperty(ICommand command, PropertyInfo prop, string value)
     {
         // Convert the argument value to the property type and set the property
@@ -131,6 +161,11 @@ public class CommandArgumentInjector
         prop.SetValue(command, convertedValue);
     }
 
+    /// <summary>
+    /// Gets the argument with the specified attribute name.
+    /// </summary>
+    /// <param name="attributeName">The name of the attribute to get the argument for.</param>
+    /// <returns>The argument with the specified attribute name.</returns>
     private string GetArgument(string attributeName)
     {
         string argument = string.Empty;
@@ -147,6 +182,12 @@ public class CommandArgumentInjector
         return argument;
     }
 
+    /// <summary>
+    /// Converts the specified argument value to the specified target type.
+    /// </summary>
+    /// <param name="arg">The argument value to convert.</param>
+    /// <param name="targetType">The type to convert the argument value to.</param>
+    /// <returns>The converted argument value.</returns>
     private static object ConvertArgumentValue(string arg, Type targetType)
     {
         if (arg == null)
@@ -175,6 +216,11 @@ public class CommandArgumentInjector
         }
     }
 
+    /// <summary>
+    /// Gets the default value for the specified type.
+    /// </summary>
+    /// <param name="type">The type to get the default value for.</param>
+    /// <returns>The default value for the specified type.</returns>
     private static object GetDefaultValue(Type type)
     {
         if (type.IsValueType)
@@ -185,6 +231,11 @@ public class CommandArgumentInjector
         return null;
     }
 
+    /// <summary>
+    /// Gets the name of the argument from the specified argument string.
+    /// </summary>
+    /// <param name="arg">The argument string to get the name from.</param>
+    /// <returns>The name of the argument.</returns>
     private static string GetArgumentName(string arg)
     {
         if (arg == null)
@@ -198,10 +249,15 @@ public class CommandArgumentInjector
         }
 
         var parts = arg.Split('=');
-        var name = parts[0].Substring(2);
+        var name = parts[0][2..];
         return name;
     }
 
+    /// <summary>
+    /// Gets the value of the argument from the specified argument string.
+    /// </summary>
+    /// <param name="arg">The argument string to get the value from.</param>
+    /// <returns>The value of the argument.</returns>
     private static string GetArgumentValue(string arg)
     {
         if (arg == null)
