@@ -2,10 +2,18 @@
 
 namespace ConsoleFramework;
 
+/// <summary>
+/// Represents a registry of available command types.
+/// </summary>
 public class CommandRegistry
 {
     private readonly IDictionary<string, Type> _commandTypes = new Dictionary<string, Type>();
 
+    /// <summary>
+    /// Registers a command type with the registry.
+    /// </summary>
+    /// <typeparam name="TCommand">The type of the command to register.</typeparam>
+    /// <exception cref="ArgumentException">Thrown when <typeparamref name="TCommand"/> is not decorated with <see cref="CommandAttribute"/> or does not implement <see cref="ICommand"/>.</exception>
     public void RegisterCommandType<TCommand>() where TCommand : ICommand
     {
         var type = typeof(TCommand);
@@ -34,6 +42,12 @@ public class CommandRegistry
         }
     }
 
+    /// <summary>
+    /// Gets the type of a command with the specified name.
+    /// </summary>
+    /// <param name="commandName">The name of the command.</param>
+    /// <returns>The type of the command with the specified name.</returns>
+    /// <exception cref="ArgumentException">Thrown when a command with the specified name is not registered.</exception>
     public Type GetCommandType(string commandName)
     {
         var commandExist = _commandTypes.TryGetValue(commandName.ToLowerInvariant(), out var commandType);
@@ -46,5 +60,9 @@ public class CommandRegistry
         return commandType;
     }
 
+    /// <summary>
+    /// Gets all registered command types.
+    /// </summary>
+    /// <returns>An enumerable of all registered command types.</returns>
     public IEnumerable<Type> GetAllCommandTypes() => _commandTypes.Select(x => x.Value);
 }

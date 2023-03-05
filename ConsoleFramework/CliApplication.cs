@@ -3,6 +3,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace ConsoleFramework;
 
+/// <summary>
+/// Represents a command-line interface (CLI) application.
+/// </summary>
 public class CliApplication
 {
     private readonly string _welcomeMessage;
@@ -10,34 +13,49 @@ public class CliApplication
     private readonly CommandFactory _factory;
     private readonly CommandRegistry _registry;
 
+    public IServiceCollection ServiceCollection { get; }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CliApplication"/> class with the specified welcome message.
+    /// </summary>
+    /// <param name="welcomeMessage">The welcome message to be displayed when the application is started.</param>
     public CliApplication(string welcomeMessage)
     {
         _welcomeMessage = welcomeMessage;
-        var serviceProvider = new ServiceCollection()
+        ServiceCollection = new ServiceCollection()
             .AddSingleton<CommandRegistry>()
             .AddSingleton<CommandFactory>()
-            .AddSingleton(sp => sp)
-            .BuildServiceProvider();
-        
-        _registry = serviceProvider.GetService<CommandRegistry>();
-        _factory = serviceProvider.GetService<CommandFactory>();
+            .AddSingleton(sp => sp);
+    }
 
-        if (_registry == null)
+    /// <summary>
+    /// Registers a command type with the application.
+    /// </summary>
+    /// <typeparam name="TCommand">The type of command to register.</typeparam>
+    public void RegisterCommand<TCommand>() where TCommand: ICommand => 
+        _registry.RegisterCommandType<TCommand>();
+
+    /// <summary>
+    /// Runs the application with the specified command-line arguments.
+    /// </summary>
+    /// <param name="args">The command-line arguments to pass to the application.</param>
+    public void Run(string[] args)
+    {
+        var serviceProvider = ServiceCollection.BuildServiceProvider();
+
+        var registry = serviceProvider.GetService<CommandRegistry>();
+        var factory = serviceProvider.GetService<CommandFactory>();
+
+        if (registry == null)
         {
             throw new Exception();
         }
 
-        _registry.RegisterCommandType<HelpCommand>();
-    }
-
-    public void RegisterCommand<TCommand>() where TCommand: ICommand => 
-        _registry.RegisterCommandType<TCommand>();
-
-    public void Run(string[] args)
-    {
+        registry.RegisterCommandType<HelpCommand>();
+        
         if (args is { Length: > 0 })
         {
-            var command = _factory.CreateCommand(args);
+            var command = factory.CreateCommand(args);
             command.Evaluate();
             return;
         }

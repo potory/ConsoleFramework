@@ -3,18 +3,30 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace ConsoleFramework;
 
+/// <summary>
+/// Represents a factory for creating command instances.
+/// </summary>
 public class CommandFactory
 {
     private readonly CommandRegistry _registry;
     private readonly IServiceProvider _provider;
     private readonly Dictionary<Type, CommandArgumentInjector> _fillers = new();
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CommandFactory"/> class with the specified service provider.
+    /// </summary>
+    /// <param name="provider">The service provider to use for creating command instances.</param>
     public CommandFactory(IServiceProvider provider)
     {
         _provider = provider;
         _registry = provider.GetService<CommandRegistry>();
     }
 
+    /// <summary>
+    /// Creates a command instance with the specified input.
+    /// </summary>
+    /// <param name="input">The input string to create the command from.</param>
+    /// <returns>A new command instance.</returns>
     public ICommand CreateCommand(string input)
     {
         // Split the input into command name and arguments
@@ -26,6 +38,11 @@ public class CommandFactory
         return CreateCommand(commandName, args);
     }
 
+    /// <summary>
+    /// Creates a command instance with the specified arguments.
+    /// </summary>
+    /// <param name="args">The arguments to create the command from.</param>
+    /// <returns>A new command instance.</returns>
     public ICommand CreateCommand(string[] args)
     {
         var commandName = args[0];
