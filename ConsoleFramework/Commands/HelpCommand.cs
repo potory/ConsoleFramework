@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using ConsoleFramework.Attributes;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ConsoleFramework.Commands;
@@ -74,7 +75,14 @@ public class HelpCommand : ICommand
                 var isRequired = argumentAttribute!.Required ? "required" : "optional";
                 string description = !string.IsNullOrWhiteSpace(argumentAttribute.Description) ? " | " + argumentAttribute.Description : string.Empty;
 
-                Console.WriteLine($"    --{argumentAttribute.Name} ({isRequired}): {property.PropertyType.Name}{description}");
+                var propertyType = property.PropertyType;
+
+                if (Nullable.GetUnderlyingType(propertyType) != null)
+                {
+                    propertyType = Nullable.GetUnderlyingType(propertyType);
+                }
+                
+                Console.WriteLine($"    --{argumentAttribute.Name} ({isRequired}): {propertyType.Name}{description}");
             }
 
             Console.WriteLine($"\nExample usage: {GetExampleUsage(instance)}");
@@ -111,7 +119,9 @@ public class HelpCommand : ICommand
         foreach (var property in properties)
         {
             var argumentAttribute = property.GetCustomAttribute<ArgumentAttribute>();
-            var exampleValue = GetExampleValue(property.PropertyType);
+
+            var exampleValue = GetExampleValue(property);
+
             var name = argumentAttribute is { Required: true } ? string.Empty : $"--{argumentAttribute.Name}="; 
             
             var exampleArgument = $"{name}{exampleValue}";
@@ -128,5 +138,12 @@ public class HelpCommand : ICommand
         var exampleCommand = commandAttribute.Names.First();
 
         return $"{exampleCommand} {string.Join(" ", exampleArguments)}";
+    }
+
+    private static string GetExampleValue(PropertyInfo property)
+    {
+        var exampleValueAttribute = property.GetCustomAttribute<ExampleValueAttribute>();
+
+        return exampleValueAttribute == null ? GetExampleValue(property.PropertyType) : exampleValueAttribute.Value.ToString();
     }
 }

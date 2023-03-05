@@ -1,4 +1,4 @@
-﻿namespace ConsoleFramework;
+﻿namespace ConsoleFramework.Attributes;
 
 [AttributeUsage(AttributeTargets.Property)]
 public class ArgumentAttribute : Attribute

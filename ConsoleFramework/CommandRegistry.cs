@@ -1,4 +1,6 @@
-﻿namespace ConsoleFramework;
+﻿using ConsoleFramework.Attributes;
+
+namespace ConsoleFramework;
 
 public class CommandRegistry
 {

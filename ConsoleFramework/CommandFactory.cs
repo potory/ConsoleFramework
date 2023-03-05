@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using System.Text;
+using ConsoleFramework.Attributes;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ConsoleFramework;
@@ -150,11 +151,25 @@ public class CommandFactory
             return GetDefaultValue(targetType);
         }
 
-        var convertedValue = targetType.IsEnum
-            ? Enum.Parse(targetType, arg, ignoreCase: true)
-            : Convert.ChangeType(arg, targetType);
+        Type underlyingType = Nullable.GetUnderlyingType(targetType);
 
-        return convertedValue;
+        if (underlyingType == null)
+        {
+            var convertedValue = targetType.IsEnum
+                ? Enum.Parse(targetType, arg, ignoreCase: true)
+                : Convert.ChangeType(arg, targetType);
+
+            return convertedValue;
+        }
+        else
+        {
+            var convertedValue = targetType.IsEnum
+                ? Enum.Parse(targetType, arg, ignoreCase: true)
+                : Convert.ChangeType(arg, underlyingType);
+            
+            Type nullableType = typeof(Nullable<>).MakeGenericType(underlyingType);
+            return Activator.CreateInstance(nullableType, convertedValue);
+        }
     }
 
     private static object GetDefaultValue(Type type)

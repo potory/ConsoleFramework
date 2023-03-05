@@ -1,4 +1,4 @@
-﻿namespace ConsoleFramework;
+﻿namespace ConsoleFramework.Attributes;
 
 [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
 public class CommandAttribute : Attribute
