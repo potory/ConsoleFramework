@@ -6,7 +6,7 @@ ConsoleFramework is a .NET Core library designed to help developers build consol
 You can install ConsoleFramework by cloning its GitHub repository and adding a reference to the ConsoleFramework project in your solution. To do so, follow these steps:
 
 1. Clone the ConsoleFramework repository from GitHub: <br>
-```git clone https://github.com/your_username/ConsoleFramework.git```
+```git clone https://github.com/potory/ConsoleFramework.git```
 2. Add the ConsoleFramework project to your solution:
    - In Visual Studio, right-click your solution and select "Add" -> "Existing Project".
    - Navigate to the location where you cloned the ConsoleFramework repository and select the ConsoleFramework.csproj file.
