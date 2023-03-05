@@ -39,35 +39,39 @@ public class CliApplication
         {
             var command = _factory.CreateCommand(args);
             command.Evaluate();
+            return;
         }
-        else
+
+        Console.WriteLine(_welcomeMessage);
+
+        while (true)
         {
-            Console.WriteLine(_welcomeMessage);
+            RunUserInput();
+        }
+    }
 
-            while (true)
+    private void RunUserInput()
+    {
+        Console.Write("> ");
+        var input = Console.ReadLine();
+
+        var commandName = input?.Split(' ')[0];
+
+        try
+        {
+            var commandType = _registry.GetCommandType(commandName);
+
+            if (commandType == null)
             {
-                Console.Write("> ");
-                var input = Console.ReadLine();
-                
-                var commandName = input?.Split(' ')[0];
-
-                try
-                {
-                    var commandType = _registry.GetCommandType(commandName);
-
-                    if (commandType == null)
-                    {
-                        Console.WriteLine($"Command '{commandName}' not found. Type 'help' for a list of available commands.");
-                    }
-
-                    var command = _factory.CreateCommand(input);
-                    command.Evaluate();
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e.Message);
-                }
+                Console.WriteLine($"Command '{commandName}' not found. Type 'help' for a list of available commands.");
             }
+
+            var command = _factory.CreateCommand(input);
+            command.Evaluate();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
         }
     }
 }
