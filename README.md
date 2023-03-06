@@ -9,7 +9,7 @@ You can install ConsoleFramework by cloning its GitHub repository and adding a r
 ```git clone https://github.com/potory/ConsoleFramework.git```
 2. Add the ConsoleFramework project to your solution:
    - In Visual Studio, right-click your solution and select "Add" -> "Existing Project".
-   - Navigate to the location where you cloned the ConsoleFramework repository and select the ConsoleFramework.csproj file.
+   - Navigate to the location where you cloned the ConsoleFramework repository and select the `ConsoleFramework.csproj` file.
 3. Add a reference to the ConsoleFramework project in your console application project:
    - In Visual Studio, right-click your console application project and select "Add" -> "Reference".
    - In the "Reference Manager" window, select the "Projects" tab.
