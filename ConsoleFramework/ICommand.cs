@@ -10,3 +10,8 @@ public interface ICommand
     /// </summary>
     void Evaluate();
 }
+
+public interface IAsyncCommand : ICommand
+{
+    Task EvaluateAsync();
+}
