@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using ConsoleFramework.Abstract;
 using ConsoleFramework.Attributes;
 using Microsoft.Extensions.DependencyInjection;
 

@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using ConsoleFramework.Abstract;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ConsoleFramework;
@@ -27,7 +28,7 @@ public class CommandFactory
     /// </summary>
     /// <param name="input">The input string to create the command from.</param>
     /// <returns>A new command instance.</returns>
-    public ICommand CreateCommand(string input)
+    public IBaseCommand CreateCommand(string input)
     {
         // Split the input into command name and arguments
         var tokens = GetTokens(input);
@@ -43,20 +44,20 @@ public class CommandFactory
     /// </summary>
     /// <param name="args">The arguments to create the command from.</param>
     /// <returns>A new command instance.</returns>
-    public ICommand CreateCommand(string[] args)
+    public IBaseCommand CreateCommand(string[] args)
     {
         var commandName = args[0];
 
         return CreateCommand(commandName, args.Skip(1).ToArray());
     }
 
-    private ICommand CreateCommand(string commandName, string[] args)
+    private IBaseCommand CreateCommand(string commandName, string[] args)
     {
         // Get the type of the command based on its name
         var commandType = _registry.GetCommandType(commandName);
 
         // Create an instance of the command type
-        var command = (ICommand)ActivatorUtilities.CreateInstance(_provider, commandType);
+        var command = (IBaseCommand)ActivatorUtilities.CreateInstance(_provider, commandType);
 
         if (!_fillers.ContainsKey(commandType))
         {

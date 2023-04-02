@@ -1,4 +1,5 @@
-﻿using ConsoleFramework.Commands;
+﻿using ConsoleFramework.Abstract;
+using ConsoleFramework.Commands;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ConsoleFramework;
@@ -34,7 +35,7 @@ public class CliApplication
     /// Registers a command type with the application.
     /// </summary>
     /// <typeparam name="TCommand">The type of command to register.</typeparam>
-    public void RegisterCommand<TCommand>() where TCommand: ICommand => 
+    public void RegisterCommand<TCommand>() where TCommand: IBaseCommand => 
         _commandsToRegister.Add(typeof(TCommand));
 
     /// <summary>
@@ -100,14 +101,16 @@ public class CliApplication
         }
     }
 
-    private static async Task RunCommand(ICommand command)
+    private static async Task RunCommand(IBaseCommand command)
     {
-        if (command is IAsyncCommand asyncCommand)
+        switch (command)
         {
-            await asyncCommand.EvaluateAsync();
-            return;
+            case IAsyncCommand asyncCommand:
+                await asyncCommand.EvaluateAsync();
+                return;
+            case ICommand syncCommand:
+                syncCommand.Evaluate();
+                break;
         }
-        
-        command.Evaluate();
     }
 }
