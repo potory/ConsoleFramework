@@ -1,4 +1,5 @@
-﻿using ConsoleFramework.Commands;
+﻿using ConsoleFramework.Abstract;
+using ConsoleFramework.Commands;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ConsoleFramework;
@@ -34,14 +35,14 @@ public class CliApplication
     /// Registers a command type with the application.
     /// </summary>
     /// <typeparam name="TCommand">The type of command to register.</typeparam>
-    public void RegisterCommand<TCommand>() where TCommand: ICommand => 
+    public void RegisterCommand<TCommand>() where TCommand: IBaseCommand => 
         _commandsToRegister.Add(typeof(TCommand));
 
     /// <summary>
     /// Runs the application with the specified command-line arguments.
     /// </summary>
     /// <param name="args">The command-line arguments to pass to the application.</param>
-    public void Run(string[] args)
+    public async Task Run(string[] args)
     {
         var serviceProvider = ServiceCollection.BuildServiceProvider();
 
@@ -63,7 +64,8 @@ public class CliApplication
         if (args is { Length: > 0 })
         {
             var command = _factory.CreateCommand(args);
-            command.Evaluate();
+            await RunCommand(command);
+
             return;
         }
 
@@ -71,11 +73,11 @@ public class CliApplication
 
         while (true)
         {
-            RunUserInput();
+            await RunUserInput();
         }
     }
 
-    private void RunUserInput()
+    private async Task RunUserInput()
     {
         Console.Write("> ");
         var input = Console.ReadLine();
@@ -91,11 +93,24 @@ public class CliApplication
             }
 
             var command = _factory.CreateCommand(input);
-            command.Evaluate();
+            await RunCommand(command);
         }
         catch (Exception e)
         {
             Console.WriteLine(e.Message);
+        }
+    }
+
+    private static async Task RunCommand(IBaseCommand command)
+    {
+        switch (command)
+        {
+            case IAsyncCommand asyncCommand:
+                await asyncCommand.EvaluateAsync();
+                return;
+            case ICommand syncCommand:
+                syncCommand.Evaluate();
+                break;
         }
     }
 }

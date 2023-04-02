@@ -1,4 +1,5 @@
-﻿using ConsoleFramework.Attributes;
+﻿using ConsoleFramework.Abstract;
+using ConsoleFramework.Attributes;
 
 namespace ConsoleFramework;
 
@@ -13,8 +14,8 @@ public class CommandRegistry
     /// Registers a command type with the registry.
     /// </summary>
     /// <typeparam name="TCommand">The type of the command to register.</typeparam>
-    /// <exception cref="ArgumentException">Thrown when <typeparamref name="TCommand"/> is not decorated with <see cref="CommandAttribute"/> or does not implement <see cref="ICommand"/>.</exception>
-    public void RegisterCommandType<TCommand>() where TCommand : ICommand
+    /// <exception cref="ArgumentException">Thrown when <typeparamref name="TCommand"/> is not decorated with <see cref="CommandAttribute"/> or does not implement <see cref="IBaseCommand"/>.</exception>
+    public void RegisterCommandType<TCommand>() where TCommand : IBaseCommand
     {
         var type = typeof(TCommand);
         RegisterCommandType(type);
@@ -30,9 +31,9 @@ public class CommandRegistry
             throw new ArgumentException($"Type {type.FullName} must have a CommandAttribute");
         }
 
-        if (!typeof(ICommand).IsAssignableFrom(type))
+        if (!typeof(IBaseCommand).IsAssignableFrom(type))
         {
-            throw new ArgumentException($"Type {type.FullName} must implement ICommand");
+            throw new ArgumentException($"Type {type.FullName} must implement IBaseCommand");
         }
 
         foreach (var commandName in commandAttribute.Names)

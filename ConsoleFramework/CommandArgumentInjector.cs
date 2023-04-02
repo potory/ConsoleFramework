@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using ConsoleFramework.Abstract;
 using ConsoleFramework.Attributes;
 
 namespace ConsoleFramework;
@@ -39,7 +40,7 @@ public class CommandArgumentInjector
     /// </summary>
     /// <param name="command">The command object to fill.</param>
     /// <param name="args">The arguments to fill the command object with.</param>
-    public void Fill(ICommand command, string[] args)
+    public void Fill(IBaseCommand command, string[] args)
     {
         CacheArguments(args);
 
@@ -75,7 +76,7 @@ public class CommandArgumentInjector
     /// Sets the required arguments of the given command object.
     /// </summary>
     /// <param name="command">The command object to set the required arguments for.</param>
-    private void SetRequiredArguments(ICommand command)
+    private void SetRequiredArguments(IBaseCommand command)
     {
         int count = _requiredAttributes.Count;
 
@@ -113,7 +114,7 @@ public class CommandArgumentInjector
     /// Sets the optional arguments of the given command object.
     /// </summary>
     /// <param name="command">The command object to set the optional arguments for.</param>
-    private void SetOptionalArguments(ICommand command)
+    private void SetOptionalArguments(IBaseCommand command)
     {
         int count = _optionalProperties.Count;
 
@@ -152,7 +153,7 @@ public class CommandArgumentInjector
     /// <param name="command">The command object to set the property value on.</param>
     /// <param name="prop">The property to set the value of.</param>
     /// <param name="value">The value to set the property to.</param>
-    private static void SetValueToProperty(ICommand command, PropertyInfo prop, string value)
+    private static void SetValueToProperty(IBaseCommand command, PropertyInfo prop, string value)
     {
         // Convert the argument value to the property type and set the property
         var propType = prop.PropertyType;
