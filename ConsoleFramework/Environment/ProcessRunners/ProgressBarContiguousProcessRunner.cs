@@ -14,6 +14,9 @@ namespace ConsoleFramework.Environment.ProcessRunners;
 /// <seealso cref="IContiguousProcessRunner"/>
 public class ProgressBarContiguousProcessRunner : IContiguousProcessRunner
 {
+    private string _cachedMessage;
+    private ProcessStatus _cachedStatus;
+
     /// <summary>
     /// Runs the specified contiguous process asynchronously and displays its progress using a console-based progress bar.
     /// </summary>
@@ -21,6 +24,8 @@ public class ProgressBarContiguousProcessRunner : IContiguousProcessRunner
     /// <returns>A Task object representing the asynchronous operation.</returns>
     public async Task RunProcessAsync(IContiguousProcess process)
     {
+        Console.Clear();
+
         try
         {
             int progress = 0;
@@ -57,9 +62,20 @@ public class ProgressBarContiguousProcessRunner : IContiguousProcessRunner
         }
     }
 
-    private static void Log(IContiguousProcess process, ProgressBar progressBar)
+    private void Log(IContiguousProcess process, ProgressBar progressBar)
     {
-        Console.Clear();
+        if (_cachedStatus == process.Status &&
+            _cachedMessage == process.Message)
+        {
+            Console.SetCursorPosition(0, 0);
+        }
+        else
+        {
+            Console.Clear();
+
+            _cachedMessage = process.Message;
+            _cachedStatus = process.Status;
+        }
 
         Console.WriteLine($"Running process '{process.Name}'...");
         Console.WriteLine($"Status: {process.Status}");
