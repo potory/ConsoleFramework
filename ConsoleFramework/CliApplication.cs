@@ -2,7 +2,6 @@
 using ConsoleFramework.Commands;
 using ConsoleFramework.Environment;
 using ConsoleFramework.Environment.ProcessRunners;
-using ConsoleFramework.UI;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ConsoleFramework;
@@ -73,7 +72,7 @@ public class CliApplication
             return;
         }
 
-        FramedMessage.Print(_welcomeMessage);
+        Console.WriteLine(_welcomeMessage);
 
         while (true)
         {
