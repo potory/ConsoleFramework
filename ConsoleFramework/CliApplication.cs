@@ -1,5 +1,7 @@
 ﻿using ConsoleFramework.Abstract;
 using ConsoleFramework.Commands;
+using ConsoleFramework.Environment;
+using ConsoleFramework.Environment.ProcessRunners;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ConsoleFramework;
@@ -28,6 +30,7 @@ public class CliApplication
         ServiceCollection = new ServiceCollection()
             .AddSingleton<CommandRegistry>()
             .AddSingleton<CommandFactory>()
+            .AddTransient<IContiguousProcessRunner, ProgressBarContiguousProcessRunner>()
             .AddSingleton(sp => sp);
     }
 
