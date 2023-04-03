@@ -23,42 +23,52 @@ public class ProgressBarContiguousProcessRunner : IContiguousProcessRunner
     {
         try
         {
-            Console.Clear();
             int progress = 0;
 
             var progressBar = new ProgressBar(50);
+
+            Log(process, progressBar);
             var task = process.RunAsync();
 
             while (!task.IsCompleted)
             {
-                Console.WriteLine($"Running process '{process.Name}'...");
-                Console.WriteLine($"Status: {process.Status}");
-                progressBar.Draw();
+                Log(process, progressBar);
 
                 await Task.Delay(1000);
 
                 var currentProgress = (int) Math.Floor(process.Progress * 50);
 
-                if (currentProgress > progress)
+                if (currentProgress <= progress)
                 {
-                    progressBar.Increment(currentProgress - progress);
-                    progress = currentProgress;
+                    continue;
                 }
 
-                Console.Clear();
+                progressBar.Increment(currentProgress - progress);
+                progress = currentProgress;
             }
 
             progressBar.Complete();
-
-            Console.Clear();
-            Console.WriteLine($"Running process '{process.Name}'...");
-            Console.WriteLine($"Progress: {process.Progress:P}");
-            Console.WriteLine($"Status: {process.Status}");
+            Log(process, progressBar);
         }
         catch (Exception ex)
         {
             Console.Clear();
             Console.WriteLine($"Error running process: {ex.Message}");
         }
+    }
+
+    private static void Log(IContiguousProcess process, ProgressBar progressBar)
+    {
+        Console.Clear();
+
+        Console.WriteLine($"Running process '{process.Name}'...");
+        Console.WriteLine($"Status: {process.Status}");
+
+        if (!string.IsNullOrEmpty(process.Message))
+        {
+            FramedMessage.Print(process.Message);
+        }
+
+        progressBar.Draw();
     }
 }

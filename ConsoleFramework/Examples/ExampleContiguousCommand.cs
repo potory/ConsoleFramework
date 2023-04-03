@@ -45,6 +45,8 @@ public class ExampleContiguousProcess : IContiguousProcess
     /// </summary>
     public double Progress { get; private set; }
 
+    public string Message => "Additional message";
+
     /// <summary>
     /// Gets the status of the process.
     /// </summary>
