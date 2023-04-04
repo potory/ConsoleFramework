@@ -2,7 +2,7 @@
 
 public static class ConsoleApplication
 {
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
         string greetings = "Welcome to My CLI Tool!\n"+
                            "Type 'help' to see available commands.\n" +
@@ -11,6 +11,6 @@ public static class ConsoleApplication
         var cli = new CliApplication(greetings);
         cli.RegisterCommand<ExampleCommand>();
 
-        cli.Run(args);
+        await cli.Run(args);
     }
 }
