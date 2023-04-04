@@ -1,6 +1,6 @@
 namespace ConsoleFramework.UI;
 
-public class FramedMessage
+public static class FramedMessage
 {
     public static void Print(string message)
     {
