@@ -1,4 +1,6 @@
 ﻿using ConsoleFramework;
+using ConsoleFramework.Abstract;
+using ConsoleFramework.Attributes;
 
 [Command("example", "An example command")]
 public class ExampleCommand : ICommand

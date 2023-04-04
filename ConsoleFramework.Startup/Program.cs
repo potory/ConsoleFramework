@@ -1,4 +1,6 @@
-﻿namespace ConsoleFramework.Startup;
+﻿using ConsoleFramework.Examples;
+
+namespace ConsoleFramework.Startup;
 
 public static class ConsoleApplication
 {
@@ -9,7 +11,9 @@ public static class ConsoleApplication
                            "Let's get started!";
 
         var cli = new CliApplication(greetings);
+
         cli.RegisterCommand<ExampleCommand>();
+        cli.RegisterCommand<ExampleContiguousCommand>();
 
         await cli.Run(args);
     }
