@@ -30,4 +30,6 @@ public interface IContiguousProcess
     /// </summary>
     /// <returns>A task that represents the asynchronous operation.</returns>
     Task RunAsync();
+
+    void Cancel();
 }

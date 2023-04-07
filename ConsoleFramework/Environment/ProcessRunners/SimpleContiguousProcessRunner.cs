@@ -12,6 +12,8 @@ namespace ConsoleFramework.Environment.ProcessRunners;
 /// <seealso cref="IContiguousProcessRunner"/>
 public sealed class SimpleContiguousProcessRunner : IContiguousProcessRunner
 {
+    private IContiguousProcess _currentProcess;
+
     /// <summary>
     /// Runs the specified contiguous process asynchronously and displays its progress in the console window.
     /// </summary>
@@ -21,7 +23,11 @@ public sealed class SimpleContiguousProcessRunner : IContiguousProcessRunner
     {
         try
         {
+            _currentProcess = process;
+
             Console.Clear();
+            Console.CancelKeyPress += OnCancelKeyPress;
+
             var task = process.RunAsync();
 
             while (!task.IsCompleted)
@@ -37,11 +43,23 @@ public sealed class SimpleContiguousProcessRunner : IContiguousProcessRunner
             Console.Clear();
             Console.WriteLine($"Progress: {process.Progress:P}");
             Console.WriteLine($"Status: {process.Status}");
+            
+            Console.CancelKeyPress -= OnCancelKeyPress;
+
+            _currentProcess = null;
         }
         catch (Exception ex)
         {
             Console.Clear();
             Console.WriteLine($"Error running process: {ex.Message}");
+
+            _currentProcess = null;
         }
+    }
+
+    private void OnCancelKeyPress(object sender, ConsoleCancelEventArgs e)
+    {
+        _currentProcess.Cancel();
+        e.Cancel = true;
     }
 }
