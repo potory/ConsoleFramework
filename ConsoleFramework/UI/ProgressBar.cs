@@ -23,11 +23,6 @@ public class ProgressBar
         Console.BackgroundColor = ConsoleColor.Black;
         Console.Write(new string(' ', _total - _value));
         Console.Write("]");
-        Console.CursorVisible = true;
         Console.Write($" {_value * 100 / _total}%");
-        Console.CursorVisible = false;
     }
-
-    public void Complete() => 
-        Console.CursorVisible = true;
 }

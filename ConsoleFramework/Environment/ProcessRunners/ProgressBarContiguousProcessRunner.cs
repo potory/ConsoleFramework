@@ -17,6 +17,8 @@ public class ProgressBarContiguousProcessRunner : IContiguousProcessRunner
     private string _cachedMessage;
     private ProcessStatus _cachedStatus;
 
+    private IContiguousProcess _currentProcess;
+
     /// <summary>
     /// Runs the specified contiguous process asynchronously and displays its progress using a console-based progress bar.
     /// </summary>
@@ -25,9 +27,13 @@ public class ProgressBarContiguousProcessRunner : IContiguousProcessRunner
     public async Task RunProcessAsync(IContiguousProcess process)
     {
         Console.Clear();
-
+        Console.CursorVisible = false;
+        _currentProcess = process;
+        
         try
         {
+            Console.CancelKeyPress += OnCancelKeyPress;
+
             int progress = 0;
 
             var progressBar = new ProgressBar(50);
@@ -52,14 +58,17 @@ public class ProgressBarContiguousProcessRunner : IContiguousProcessRunner
                 progress = currentProgress;
             }
 
-            progressBar.Complete();
             Log(process, progressBar);
+            Console.CancelKeyPress -= OnCancelKeyPress;
         }
         catch (Exception ex)
         {
             Console.Clear();
             Console.WriteLine($"Error running process: {ex.Message}");
         }
+        
+        _currentProcess = null;
+        Console.CursorVisible = true;
     }
 
     private void Log(IContiguousProcess process, ProgressBar progressBar)
@@ -86,5 +95,11 @@ public class ProgressBarContiguousProcessRunner : IContiguousProcessRunner
         }
 
         progressBar.Draw();
+    }
+
+    private void OnCancelKeyPress(object sender, ConsoleCancelEventArgs e)
+    {
+        _currentProcess.Cancel();
+        e.Cancel = true;
     }
 }

@@ -5,5 +5,6 @@ public enum ProcessStatus
     NotStarted,
     Running,
     Completed,
-    Failed
+    Failed,
+    Canceled
 }
